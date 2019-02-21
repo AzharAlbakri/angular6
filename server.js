@@ -14,6 +14,26 @@ app.use(bodyParser.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 
+app.use(function (req, res, next) {
+
+// Website you wish to allow to connect
+res.setHeader('Access-Control-Allow-Origin',"*");
+// Request methods you wish to allow
+res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, PUT, PATCH, DELETE');
+// Request headers you wish to allow
+res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With,content-type');
+// Set to true if you need the website to include cookies in the requests sent
+// to the API (e.g. in case you use sessions)
+res.setHeader('Access-Control-Allow-Credentials', true);
+
+//resp.setHeader('Access-Control-Allow-Origin','*') 
+
+// Pass to next layer of middleware
+next();
+});
+
+
+
 // API calls
 app.get("/", function(req, res) {
   res.sendFile(__dirname + "/src/index.html");
@@ -40,7 +60,7 @@ if (process.env.NODE_ENV === "production") {
 }
 
 //////////////////////////////////////////////////////////////
-//                            SignIp                         //
+//                            SignIn                         //
 /////////////////////////////////////////////////////////////
 app.post("/signIn", function(req, res) {
   var email = req.body.email;
@@ -63,6 +83,7 @@ app.post("/signIn", function(req, res) {
           console.log("toooookeeen" + token);
           res.json({
             email: email,
+            name: result[0].name,
             message: "User Authenticate",
             token: token
           });
@@ -80,11 +101,13 @@ app.post("/signIn", function(req, res) {
 //                            SignUp                         //
 //////////////////////////////////////////////////////////////
 app.post("/signUp", function(req, res, next) {
+  console.log('body for sign up', req.body)
+
   var userExist = `select * from users where email =\"${req.body.email}\"`;
   // console.log(userExist, "usreee");
   dbConnection.Schema.query(userExist, function(err, result) {
-    if (result) {
-      console.log(result, "result");
+    if (result.length==0) {
+      console.log(result, "result/*/***/*/**/*/*/*/*/*/*/*");
       bcrypt.hash(req.body.password, 10, (err, hash) => {
         if (err) {
           return res.status(500).json({
@@ -120,7 +143,8 @@ app.post("/signUp", function(req, res, next) {
         }
       });
     } else {
-      res.send("User already exists!");
+      console.log("User already exists!")
+      res.json("User already exists!");
     }
   });
 });
