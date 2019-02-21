@@ -14,9 +14,9 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // API calls
-app.get("/", function(req, res) {
-  res.sendFile(__dirname + "/src/index.html");
-});
+// app.get("/", function(req, res) {
+//   res.sendFile(__dirname + "/dist/newsApp/index.html");
+// });
 
 app.get("/api/hello", (req, res) => {
   res.send("Hello From Express");
@@ -142,6 +142,27 @@ app.get('/getUser', (req, res) => {
   });
 })
 
+app.get('/deleteUser', (req, res) => {
+  var query = `DELETE FROM users WHERE id = 4`;
+  dbConnection.Schema.query(query, function(err, result) {
+    if (result) {
+      res.send(result);
+    } else {
+      res.send(err);
+    }
+  });
+})
+
+app.get('/modifyUser', (req, res) => {
+  var query = `UPDATE users SET name = 'Amjad' WHERE id = 10`;
+  dbConnection.Schema.query(query, function(err, result) {
+    if (result) {
+      res.send(result);
+    } else {
+      res.send(err);
+    }
+  });
+})
 
 // if (process.env.NODE_ENV === "production") {
   // Serve any static files
