@@ -11,7 +11,6 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(bodyParser.json());
-
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // API calls
@@ -30,14 +29,6 @@ app.post("/api/world", (req, res) => {
   );
 });
 
-if (process.env.NODE_ENV === "production") {
-  // Serve any static files
-  app.use(express.static(path.join(__dirname, "client/build")));
-  // Handle React routing, return all requests to React app
-  app.get("*", function(req, res) {
-    res.sendFile(path.join(__dirname, "client/build", "index.html"));
-  });
-}
 
 //////////////////////////////////////////////////////////////
 //                            SignIp                         //
@@ -125,4 +116,39 @@ app.post("/signUp", function(req, res, next) {
   });
 });
 
+app.post('/getUsers', (req, res) => {
+  var email = req.body.email;
+  console.log(req.body);
+  var query = `select * from users where email =\"${email}\"`;
+  dbConnection.Schema.query(query, function(err, result) {
+    if (result) {
+      res.send(result);
+    } else {
+      res.send(err);
+    }
+  });
+})
+
+app.get('/getUser', (req, res) => {
+  var email = req.body.email;
+  console.log(req.body);
+  var query = `select * from users where email = 'az@gil.com'`;
+  dbConnection.Schema.query(query, function(err, result) {
+    if (result) {
+      res.send(result);
+    } else {
+      res.send(err);
+    }
+  });
+})
+
+
+// if (process.env.NODE_ENV === "production") {
+  // Serve any static files
+  app.use(express.static(path.join(__dirname, 'dist/newsApp')));
+  // Handle React routing, return all requests to React app
+  app.get("*", function(req, res) {
+    res.sendFile(path.join(__dirname, 'dist/newsApp/index.html'));
+  });
+// }
 app.listen(port, () => console.log(`Listening on port ${port}`));
