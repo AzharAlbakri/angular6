@@ -9,13 +9,12 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(bodyParser.json());
-
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // API calls
-app.get('/', function(req, res){
-    res.sendFile(__dirname + '/src/index.html');
-  });
+// app.get('/', function(req, res){
+//     res.send('Hello');
+//   });
 
 
 app.get("/api/hello", (req, res) => {
@@ -28,15 +27,6 @@ app.post("/api/world", (req, res) => {
     `I received your POST request. This is what you sent me: ${req.body.post}`
   );
 });
-
-if (process.env.NODE_ENV === "production") {
-  // Serve any static files
-  app.use(express.static(path.join(__dirname, "client/build")));
-  // Handle React routing, return all requests to React app
-  app.get("*", function(req, res) {
-    res.sendFile(path.join(__dirname, "client/build", "index.html"));
-  });
-}
 
 
 // Api to add users
@@ -91,4 +81,39 @@ app.post("/signIn", function(req, res) {
   });
 });
 
+app.post('/getUsers', (req, res) => {
+  var email = req.body.email;
+  console.log(req.body);
+  var query = `select * from users where email =\"${email}\"`;
+  dbConnection.Schema.query(query, function(err, result) {
+    if (result) {
+      res.send(result);
+    } else {
+      res.send(err);
+    }
+  });
+})
+
+app.get('/getUser', (req, res) => {
+  var email = req.body.email;
+  console.log(req.body);
+  var query = `select * from users where email = 'az@gil.com'`;
+  dbConnection.Schema.query(query, function(err, result) {
+    if (result) {
+      res.send(result);
+    } else {
+      res.send(err);
+    }
+  });
+})
+
+
+// if (process.env.NODE_ENV === "production") {
+  // Serve any static files
+  app.use(express.static(path.join(__dirname, 'dist/newsApp')));
+  // Handle React routing, return all requests to React app
+  app.get("*", function(req, res) {
+    res.sendFile(path.join(__dirname, 'dist/newsApp/index.html'));
+  });
+// }
 app.listen(port, () => console.log(`Listening on port ${port}`));
