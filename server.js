@@ -31,6 +31,7 @@ res.setHeader('Access-Control-Allow-Credentials', true);
 next();
 });
 
+app.use(express.static(__dirname+'/dist/newsApp'))
 
 
 // API calls
