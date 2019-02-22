@@ -1,10 +1,13 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { User } from './user.model';
 import { SignIn } from './sign.model';
 
-import { Observable } from 'rxjs';
 // import { SignIn } from './sign.model';
+import { Observable, of } from 'rxjs';
+import { catchError, map, tap } from 'rxjs/operators';
+
+
 
 @Injectable({
   providedIn: 'root'

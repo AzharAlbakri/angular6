@@ -11,7 +11,6 @@ const app = express();
 const port = process.env.PORT || 5000;
 
 app.use(bodyParser.json());
-
 app.use(bodyParser.urlencoded({ extended: true }));
 
 app.use(function (req, res, next) {
@@ -35,9 +34,9 @@ next();
 
 
 // API calls
-app.get("/", function(req, res) {
-  res.sendFile(__dirname + "/src/index.html");
-});
+// app.get("/", function(req, res) {
+//   res.sendFile(__dirname + "/dist/newsApp/index.html");
+// });
 
 app.get("/api/hello", (req, res) => {
   res.send("Hello From Express");
@@ -50,14 +49,6 @@ app.post("/api/world", (req, res) => {
   );
 });
 
-if (process.env.NODE_ENV === "production") {
-  // Serve any static files
-  app.use(express.static(path.join(__dirname, "client/build")));
-  // Handle React routing, return all requests to React app
-  app.get("*", function(req, res) {
-    res.sendFile(path.join(__dirname, "client/build", "index.html"));
-  });
-}
 
 //////////////////////////////////////////////////////////////
 //                            SignIn                         //
@@ -149,4 +140,60 @@ app.post("/signUp", function(req, res, next) {
   });
 });
 
+app.post('/getUsers', (req, res) => {
+  var email = req.body.email;
+  console.log(req.body);
+  var query = `select * from users where email =\"${email}\"`;
+  dbConnection.Schema.query(query, function(err, result) {
+    if (result) {
+      res.send(result);
+    } else {
+      res.send(err);
+    }
+  });
+})
+
+app.get('/getUser', (req, res) => {
+  var email = req.body.email;
+  console.log(req.body);
+  var query = `select * from users where email = 'az@gil.com'`;
+  dbConnection.Schema.query(query, function(err, result) {
+    if (result) {
+      res.send(result);
+    } else {
+      res.send(err);
+    }
+  });
+})
+
+app.get('/deleteUser', (req, res) => {
+  var query = `DELETE FROM users WHERE id = 4`;
+  dbConnection.Schema.query(query, function(err, result) {
+    if (result) {
+      res.send(result);
+    } else {
+      res.send(err);
+    }
+  });
+})
+
+app.get('/modifyUser', (req, res) => {
+  var query = `UPDATE users SET name = 'Amjad' WHERE id = 10`;
+  dbConnection.Schema.query(query, function(err, result) {
+    if (result) {
+      res.send(result);
+    } else {
+      res.send(err);
+    }
+  });
+})
+
+if (process.env.NODE_ENV === "production") {
+  // Serve any static files
+  app.use(express.static(path.join(__dirname, 'dist/newsApp')));
+  // Handle React routing, return all requests to React app
+  app.get("*", function(req, res) {
+    res.sendFile(path.join(__dirname, 'dist/newsApp/index.html'));
+  });
+}
 app.listen(port, () => console.log(`Listening on port ${port}`));
